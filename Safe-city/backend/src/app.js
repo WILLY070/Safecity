@@ -10,7 +10,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "https://safecity070.vercel.app/",
+    origin: "https://safecity070.vercel.app",
     credentials: true,
   })
 );
