@@ -12,7 +12,8 @@ const app = express();
 // Define all allowed domains here
 const allowedOrigins = [
   "https://safecity070.vercel.app", 
-  "https://safecity-beige.vercel.app/",// Main Production Domain
+  "https://safecity-beige.vercel.app/",
+  "https://safecity-beige.vercel.app"// Main Production Domain
   "http://localhost:5173",          // Local Development
   "https://safecity070-inf2i3i6q-willys-projects-9b108f6c.vercel.app" // Your specific preview URL
 ];
