@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import api from '../services/api'; // Import your configured API helper
 
 const IncidentForm = () => {
   const [formData, setFormData] = useState({
@@ -15,31 +16,30 @@ const IncidentForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('Submitting...');
     
-    // Get the token from local storage (assuming you saved it there during login)
+    // Get the token from local storage
     const token = localStorage.getItem('token'); 
 
     try {
-      const response = await fetch('http://localhost:5000/api/incidents', {
-        method: 'POST',
+      // USE api.post INSTEAD OF FETCH
+      // The Base URL is already handled by api.js (pointing to Render)
+      const response = await api.post('/incidents', formData, {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Send token for authentication
-        },
-        body: JSON.stringify(formData),
+          // Attach the token so the backend knows who you are
+          'Authorization': `Bearer ${token}` 
+        }
       });
 
-      const data = await response.json();
+      // Axios (api.post) automatically checks for success
+      setMessage('Incident reported successfully!');
+      setFormData({ title: '', description: '', location: '', type: 'Safety' }); // Reset form
 
-      if (response.ok) {
-        setMessage('Incident reported successfully!');
-        setFormData({ title: '', description: '', location: '', type: 'Safety' }); // Reset form
-      } else {
-        setMessage(data.message || 'Error reporting incident');
-      }
     } catch (error) {
       console.error('Error:', error);
-      setMessage('Server error. Please try again later.');
+      // Safely extract the error message from the backend response
+      const errorMsg = error.response?.data?.message || 'Error reporting incident';
+      setMessage(errorMsg);
     }
   };
 
@@ -48,7 +48,7 @@ const IncidentForm = () => {
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Report a New Incident</h2>
       
       {message && (
-        <div className={`p-3 mb-4 rounded ${message.includes('success') ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+        <div className={`p-3 mb-4 rounded ${message.includes('successfully') ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
           {message}
         </div>
       )}
